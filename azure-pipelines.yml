@@ -36,6 +36,15 @@ stages:
          mvn clean compile
       displayName: code compilation
 
+- stage: AutomatedTesting
+  dependsOn: CompileCode
+  jobs:
+  - job: JavaTestCasesRun
+    steps:
+    - script: |
+         maven test
+      displayName: Running java test cases
+
 - stage: QualityCheck
   dependsOn: CompileCode
   jobs:
