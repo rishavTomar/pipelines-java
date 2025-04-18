@@ -85,6 +85,35 @@ stages:
           -Dsonar.login=$(sonar_token)
 
     
+- stage: BuildAndPublish
+  dependsOn: [SonarCodeAnalysis,QualityCheck]
+  jobs:
+  - job: BuildandPublishPackage
+
+    steps:
+    - script: |
+        echo "Install Maven"
+         mvn -v || {
+          echo "Maven not found. Installing maven"
+          sudo apt-get update
+          sudo apt-get install -y maven
+        }
+      displayName: Instaslling maven
+    
+    - script: |
+        mvn clean package
+      displayName: Building Java code
+    
+    - script: |
+        echo "create settings.xml file for nexus repo"
+      displayName: Creating setting.xm for nexus repo
+    
+    - script: |
+        maven clean deploy -s settings.xml
+      env:
+        NEXUS_USERNAME: $(NEXUS_USERNAME)
+        NEXUS_PASSWORD: $(NEXUS_PASSWORD)
+      displayName: Deploy artifacts to nexus
 
 
   
