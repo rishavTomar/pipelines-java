@@ -1,14 +1,13 @@
 name: Java CI/CD Pipeline
 
 trigger:
- batch: true
  branches:
   include:
   - main
   - develop
 
 pool:
-  vmaImage: ubuntu-latest
+  vmImage: ubuntu-latest
 
 variables:
   JAVA_SDK_VERSION: 17
@@ -23,7 +22,7 @@ stages:
         mvn -v || {
           echo "Maven not found. Installing maven"
           sudo apt-get update
-          sudeo apt-get install -y maven
+          sudo apt-get install -y maven
         }
       displayName: Instaslling maven
     
