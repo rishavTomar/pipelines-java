@@ -13,9 +13,9 @@ variables:
   JAVA_SDK_VERSION: 17
 
 stages:
-- stage: Compile_code
+- stage: CompileCode
   jobs:
-  - job: compile_code
+  - job: CompileCode
     steps:
     - script: |
         echo "checking Maven Installation"
@@ -36,7 +36,25 @@ stages:
          mvn clean compile
       displayName: code compilation
 
-     
+- stage: QualityCheck
+  dependsOn: CompileCode
+  jobs:
+  - job: TrivyCodeScanning
+    steps:
+    - script: |
+         sudo apt-get install wget apt-transport-https gnupg lsb-release
+         wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+         echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+         sudo apt-get update
+         sudo apt-get install trivy
+      displayName: Installing Trivy
+
+    - script: |
+         echo "Trivy scanning"
+         trivy fs --severity HIGH, CRITICAL --no-progress --format json --output trivy_report.json
+      displayName: Trivy code scanning
+
+    
 
   
    
