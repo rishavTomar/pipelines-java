@@ -1,23 +1,46 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+name: Java CI/CD Pipeline
 
 trigger:
-- main
+ batch: true
+ branches:
+  include:
+  - main
+  - develop
 
 pool:
-  vmImage: ubuntu-latest
+  vmaImage: ubuntu-latest
 
-steps:
-- task: Maven@4
-  inputs:
-    azureSubscription: 'azure_service_connection'
-    mavenPomFile: 'pom.xml'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    javaHomeOption: 'JDKVersion'
-    mavenVersionOption: 'Default'
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: false
+variables:
+  JAVA_SDK_VERSION: 17
+
+stages:
+- stage: Compile_code
+  jobs:
+  - job: compile_code
+    steps:
+    - script: |
+        echo "checking Maven Installation"
+        mvn -v || {
+          echo "Maven not found. Installing maven"
+          sudo apt-get update
+          sudeo apt-get install -y maven
+        }
+      displayName: Instaslling maven
+    
+    - script: |
+        echo "Java Version:"
+        java -version
+      displayName: checking java version
+    
+    - script: |
+         echo "Java code compilation"
+         mvn clean compile
+      displayName: code compilation
+
+     
+
+  
+   
+    
+     
+
