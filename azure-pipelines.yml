@@ -10,7 +10,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  JAVA_SDK_VERSION: 17
+- group: sonar
 
 stages:
 - stage: CompileCode
@@ -51,7 +51,7 @@ stages:
       displayName: Instaslling maven
 
     - script: |
-         maven test
+         mvn test
       displayName: Running java test cases
 
 - stage: QualityCheck
@@ -71,6 +71,17 @@ stages:
          echo "Trivy scanning"
          trivy fs --severity HIGH,CRITICAL --no-progress --format json --output trivy_report.json .
       displayName: Trivy code scanning
+
+- stage: SonarCodeAnalysis
+  jobs:
+  - job: RunSonarCodeAnalysis
+    steps:
+    - script: |
+        echo "Running SonarQube Analysis"
+        mvn sonar:sonar \
+          -Dsonar.projectKey=$(SONAR_PROJECT_KEY) \
+          -Dsonar.host.url=$(SONAR_HOST_URL) \
+          -Dsonar.login=$(sonar_token)
 
     
 
