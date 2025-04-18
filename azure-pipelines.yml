@@ -42,6 +42,15 @@ stages:
   - job: JavaTestCasesRun
     steps:
     - script: |
+        echo "checking Maven Installation"
+        mvn -v || {
+          echo "Maven not found. Installing maven"
+          sudo apt-get update
+          sudo apt-get install -y maven
+        }
+      displayName: Instaslling maven
+
+    - script: |
          maven test
       displayName: Running java test cases
 
