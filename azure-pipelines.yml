@@ -51,7 +51,7 @@ stages:
 
     - script: |
          echo "Trivy scanning"
-         trivy fs --severity HIGH, CRITICAL --no-progress --format json --output trivy_report.json
+         trivy fs --severity HIGH,CRITICAL --no-progress --format json --output trivy_report.json
       displayName: Trivy code scanning
 
     
