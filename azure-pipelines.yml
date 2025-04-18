@@ -73,6 +73,7 @@ stages:
       displayName: Trivy code scanning
 
 - stage: SonarCodeAnalysis
+  dependsOn: CompileCode
   jobs:
   - job: RunSonarCodeAnalysis
     steps:
